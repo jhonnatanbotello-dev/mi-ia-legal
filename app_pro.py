@@ -11,7 +11,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
-# 🔑 CONFIGURACIÓN DE TU CORREO
 CORREO_EMISOR = "jhonnatanbotello@gmail.com"
 CONTRASEÑA_APP = "mjeoqwvzybczzyid"
 CORREO_RECEPTOR = "jhonnatanbotello@gmail.com"
@@ -23,14 +22,13 @@ def leer_archivo_pdf(archivo):
         for pagina in lector.pages: texto += pagina.extract_text()
         return texto
     except Exception: return ""
-
 def enviar_correo_alerta(consulta, respuesta):
     try:
         msg = MIMEMultipart()
         msg['From'] = CORREO_EMISOR
         msg['To'] = CORREO_RECEPTOR
         msg['Subject'] = "📩 Nueva Consulta Legal en tu App"
-        cuerpo = f"Se ha registrado una interacción jurídica:\n\n❓ Consulta: {consulta}\n\n🤖 Respuesta del Abogado IA:\n{respuesta}"
+        cuerpo = f"Se ha registrado una interacción:\n\n❓ Consulta: {consulta}\n\n🤖 Respuesta:\n{respuesta}"
         msg.attach(MIMEText(cuerpo, 'plain', 'utf-8'))
         server = smtplib.SMTP_SSL('://gmail.com', 465)
         server.login(CORREO_EMISOR, CONTRASEÑA_APP)
@@ -51,13 +49,10 @@ def obtener_contexto_aprendizaje():
         return contexto + "-----------------------------------------\n"
     except Exception: return ""
 
-# Inicializar Base de Datos
 conn = sqlite3.connect('consultas_usuarios.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('CREATE TABLE IF NOT EXISTS historial (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT, consulta TEXT, respuesta TEXT)')
 conn.commit()
-
-# Diseño Interfaz Lateral
 st.sidebar.title("📁 Documentos de Sustento")
 st.sidebar.markdown("Carga archivos de consulta para el análisis:")
 pdf_subido = st.sidebar.file_uploader("Subir archivo PDF", type=["pdf"])
@@ -65,7 +60,6 @@ pdf_subido = st.sidebar.file_uploader("Subir archivo PDF", type=["pdf"])
 if st.sidebar.button("🗑️ Limpiar Pantalla"):
     st.session_state.messages = []
 
-# Área de Chat Principal
 st.title("⚖️ Centro IA de Redacción Pro")
 st.subheader("Consultoría Legal de Redacción Automatizada - Régimen Peruano")
 
@@ -78,9 +72,7 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
     if pdf_subido:
         texto_pdf = f"\n[Insumo o Documento adjunto por el cliente]:\n{leer_archivo_pdf(pdf_subido)}\n"
         st.info("📄 Documento cargado para el análisis legal.")
-                       # Conexión cifrada directa al cerebro de tu laptop
-        client = ollama.Client(host='https://ngrok-free.dev')
-    
+        
     with st.chat_message("user"): st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
     
@@ -104,6 +96,7 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
             
             mensaje_final = f"{instruccion}\n\n{memoria}{texto_pdf}\nInstrucción actual del cliente: {prompt}"
             
+            client = ollama.Client(host='https://ngrok-free.dev')
             response = client.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
             respuesta_ia = response['message']['content']
             message_placeholder.markdown(respuesta_ia)
