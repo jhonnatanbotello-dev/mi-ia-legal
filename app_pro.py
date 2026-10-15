@@ -79,7 +79,7 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
         texto_pdf = f"\n[Insumo o Documento adjunto por el cliente]:\n{leer_archivo_pdf(pdf_subido)}\n"
         st.info("📄 Documento cargado para el análisis legal.")
                     # Conexión cifrada directa al cerebro de tu laptop
-            client = ollama.Client(host='https://ngrok-free.dev')
+            client = ollama.Client(host='    client = ollama.Client(host=https://postnasal-seldom-playful.ngrok-free.dev')
             response = client.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
 
     with st.chat_message("user"): st.markdown(prompt)
