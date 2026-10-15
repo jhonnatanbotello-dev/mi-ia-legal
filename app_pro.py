@@ -95,8 +95,8 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
             )
             
             mensaje_final = f"{instruccion}\n\n{memoria}{texto_pdf}\nInstrucción actual del cliente: {prompt}"
-            
-            client = ollama.Client(host='https://ngrok-free.dev')
+
+            client = ollama.Client(host='https://postnasal-seldom-playful.ngrok-free.dev')
             response = client.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
             respuesta_ia = response['message']['content']
             message_placeholder.markdown(respuesta_ia)
