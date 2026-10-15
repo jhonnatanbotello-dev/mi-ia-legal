@@ -78,10 +78,9 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
     if pdf_subido:
         texto_pdf = f"\n[Insumo o Documento adjunto por el cliente]:\n{leer_archivo_pdf(pdf_subido)}\n"
         st.info("📄 Documento cargado para el análisis legal.")
-                    # Conexión cifrada directa al cerebro de tu laptop
-            client = ollama.Client(host='    client = ollama.Client(host=https://postnasal-seldom-playful.ngrok-free.dev')
-            response = client.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
-
+                       # Conexión cifrada directa al cerebro de tu laptop
+    client = ollama.Client(host='https://ngrok-free.dev')
+    
     with st.chat_message("user"): st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
     
@@ -90,7 +89,6 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
             message_placeholder = st.empty()
             memoria = obtener_contexto_aprendizaje()
             
-            # Directiva estricta para el modelo Llama 3 8B
             instruccion = (
                 "Eres un prestigioso Abogado Senior especialista en Derecho Laboral Peruano. Redacta con máxima seriedad, "
                 "rigor jurídico, elocuencia y coherencia absoluta. Tienes terminantemente prohibido alucinar, inventar leyes falsas "
@@ -106,12 +104,10 @@ if prompt := st.chat_input("Solicita tu redacción jurídica aquí..."):
             
             mensaje_final = f"{instruccion}\n\n{memoria}{texto_pdf}\nInstrucción actual del cliente: {prompt}"
             
-            # Invocación al nuevo modelo de 8 Billones de parámetros
-            response = ollama.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
+            response = client.chat(model='llama3:8b', messages=[{'role': 'user', 'content': mensaje_final}])
             respuesta_ia = response['message']['content']
             message_placeholder.markdown(respuesta_ia)
             
-            # Fábrica del archivo PDF formal
             buffer = io.BytesIO()
             doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
             story = []
